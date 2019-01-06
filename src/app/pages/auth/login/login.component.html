@@ -1,0 +1,21 @@
+<FlexboxLayout class="page page-login">
+    <StackLayout class="flexbox-item company-name-container">
+        <Label class="t-30 company-name" text="Login"></Label>
+    </StackLayout>
+    <!--<Image src="res://company_logo" stretch="none" class="company-logo"></Image>-->
+    <StackLayout class="flexbox-item">
+        <TextField required hint="Email" [(ngModel)]="email" #emailModel="ngModel" (textChange)="errors['email'] = false"></TextField>
+        <AbsoluteLayout *ngIf="errors['email']">
+            <Label  text="Wrong Email format"></Label>
+        </AbsoluteLayout>
+        <TextField required hint="Password" secure="true" [(ngModel)]="password" #passwordModel="ngModel" (textChange)="errors['password'] = false"></TextField>
+        <AbsoluteLayout *ngIf="errors['password']">
+            <Label  text="Password length should be greater than 3"></Label>
+        </AbsoluteLayout>
+        <Button
+                class="btn btn-login btn-rounded-sm font-weight-bold t-18"
+                (tap)="login()"
+                text="Log in"
+                isEnabled="{{emailModel.valid && passwordModel.valid || errors.length > 0}}"></Button>
+    </StackLayout>
+</FlexboxLayout>

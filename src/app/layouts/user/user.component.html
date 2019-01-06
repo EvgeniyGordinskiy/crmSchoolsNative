@@ -1,0 +1,14 @@
+<DockLayout>
+
+    <BottomNavigation
+          dock="bottom"
+          [tabs]="tabs"
+          activeColor="red"
+          inactiveColor="yellow"
+          backgroundColor="black"
+          keyLineColor="black"
+          (tabSelected)="onBottomNavigationTabSelected($event)"
+          (tabPressed)="onBottomNavigationTabPressed($event)"
+          row="1">
+    </BottomNavigation>
+</DockLayout>

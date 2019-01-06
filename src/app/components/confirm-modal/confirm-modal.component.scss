@@ -1,0 +1,71 @@
+@import "../../../assets/scss/custom-carousel";
+
+.confirm-delete-popup-wrapper{
+  //position: absolute;
+  //width: 100%;
+  //height: 100%;
+  //top:0;
+  //z-index: 99999;
+  //background-color: rgba(59, 59, 59, 0.61);
+  .confirm-calendar{
+    width: 306px;
+    margin-left: 15px;
+    margin-bottom: -30px;
+    h4{
+      text-align: center;
+    }
+    .small-mat-button{
+      margin-top: -40px;
+      margin-left: 287px;
+    }
+    .carousel-custom-months {
+      height: 45px;
+      button{
+        top: 0;
+      }
+      .carousel-content-months {
+        width: 98px;
+        height: 48px;
+        bottom: 6px;
+        .inner-carousel-content-months {
+          .carousel-content-item {
+            width: 210px;
+            .month {
+              width: 90px;
+              display: flex;
+              flex-direction: column;
+              position: relative;
+              top: 4px;
+            }
+          }
+        }
+      }
+    }
+    app-calendar{
+      min-height: 292px;
+    }
+  }
+  .confirm-delete-popup{
+    width: 350px;
+    height: 60px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    .delete-message-with-user{
+      position: absolute;
+      width: 223px;
+      margin-top: -3px;
+    }
+    .add-button-in-modal{
+      position: relative;
+      right: 11px;
+      top: 21px;
+    }
+    ::ng-deep .delete-from-all{
+      span{
+        position: relative;
+        right: 5px;
+      }
+    }
+  }
+}

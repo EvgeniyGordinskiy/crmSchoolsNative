@@ -1,0 +1,90 @@
+<Page>
+  <ScrollView sdkExampleTitle sdkToggleNavButton >
+    <StackLayout *ngIf="repeatable === true">
+      <Button class="small-mat-button" (tap)="close()">close</Button>
+      <Button class="mat-primary add-button-in-modal" (tap)="actionDelete()" text="Delete One"></Button>
+      <Button class="mat-primary add-button-in-modal" (tap)="actionDeleteAll()" text="Delete All"></Button>
+    </StackLayout>
+    <StackLayout *ngIf="isWithData()">
+      <Button class="small-mat-button" (tap)="close()" text="Close"></Button>
+    </StackLayout>
+    <StackLayout *ngIf="isWithData()">
+      <Button class="small-mat-button" (click)="close()">
+       <Label  class="mdi" [text]="'mdi-close' | fonticon"></Label>
+      </Button>
+      <Label class="h4" text="Please choose when you will start"></Label>
+    </StackLayout>
+    <StackLayout class="confirm-delete-popup small-mat-button-wrapper"  *ngIf="repeatable === false">
+      <Label text="There are {{studentsNumber}} connected User to the program. Delete program?"></Label>
+    </StackLayout>
+    <StackLayout *ngIf="!isProgramDirectionWithForce() && !isWithData()" class="delete-message-with-user">
+      <Label text="{{getAsk()}}"></Label>
+    </StackLayout>
+    <StackLayout  *ngIf="!isWithData()">
+      <Button class="small-mat-button" (tap)="close()"
+      >
+        <Label  class="mdi" [text]="'mdi-close' | fonticon"></Label>
+      </Button>
+    </StackLayout>
+    <StackLayout  *ngIf="!isWithButtons()">
+      <Button class="small-mat-button"
+              (tap)="actionDelete()"
+              text="{{getButtonTitle()}}"
+      >
+      </Button>
+    </StackLayout>
+    <StackLayout  *ngIf="!isWithButtons()">
+      <Button class="small-mat-button" (tap)="close()"
+      >
+        <Label  class="mdi" [text]="'mdi-close' | fonticon"></Label>
+      </Button>
+    </StackLayout>
+  </ScrollView>
+      <!--<app-custom-carousel-->
+        <!--[innerDivClass]="'inner-carousel-content-months'"-->
+        <!--[displayItems]="1"-->
+        <!--[arrayItems]="months"-->
+        <!--[move]="moveMonthsCarousel"-->
+        <!--[startPage]="currentMonth - 1">-->
+        <!--<div class="carousel-custom carousel-custom-months buttons-are-small">-->
+          <!--<button mat-button class="mat-primary" (click)="onMonthToRight()"><mat-icon>keyboard_arrow_left</mat-icon></button>-->
+          <!--<div class="carousel-content  carousel-content-months">-->
+            <!--<div class="inner-carousel-content inner-carousel-content-months">-->
+              <!--<div class="carousel-content-item" *ngFor="let month of months">-->
+                <!--<div class="month">-->
+                  <!--<span>{{month}}</span>-->
+                  <!--<span>{{currentYear}}</span>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<button mat-button class="mat-primary" (click)="onMonthToLeft()"><mat-icon>keyboard_arrow_right</mat-icon></button>-->
+        <!--</div>-->
+      <!--</app-custom-carousel>-->
+      <!--<app-calendar-->
+        <!--[insertingTime]="selectingTime"-->
+        <!--[disablePast]="true"-->
+        <!--[identifyCurrentDay]="true"-->
+        <!--(selectedDay)="onSelectedDay($event)"-->
+        <!--[insertingSchedule]="insertingSchedule"-->
+        <!--[insertingMonth]="monthsNumber">-->
+      <!--</app-calendar>-->
+    <!--<div class="confirm-delete-popup small-mat-button-wrapper" *ngIf="repeatable === false">-->
+      <!--<div *ngIf="isProgramDirectionWithForce() && !isWithData()" class="delete-message-with-user">-->
+        <!--<span>-->
+          <!--There are {{studentsNumber}} connected User to the program. Delete program?-->
+        <!--</span>-->
+      <!--</div>-->
+      <!--<div *ngIf="!isProgramDirectionWithForce() && !isWithData()" class="delete-message-with-user">-->
+        <!--<span>-->
+          <!--{{getAsk()}}-->
+        <!--</span>-->
+      <!--</div>-->
+      <!--<button mat-raised-button class="small-mat-button" (click)="close()" *ngIf="!isWithData()"><mat-icon>close</mat-icon></button>-->
+      <!--<button mat-button class="mat-primary add-button-in-modal" (click)="actionDelete()"-->
+      <!--*ngIf="isWithButtons()">-->
+        <!--{{getButtonTitle()}}</button>-->
+      <!--<button mat-button class="mat-primary add-button-in-modal" (click)="close()"-->
+              <!--*ngIf="isWithButtons()">Cancel</button>-->
+    <!--</div>-->
+</Page>

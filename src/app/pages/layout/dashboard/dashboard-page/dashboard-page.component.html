@@ -1,0 +1,6 @@
+<FlexboxLayout class="dashboard-wrapper">
+  <DashboardStudent *ngIf="user.role === 'student_individual'" [user]="user"></DashboardStudent>
+  <!--<app-dashboard-teacher *ngIf="user.role === 'teacher'" [user]="user"></app-dashboard-teacher>-->
+  <!--<button mat-button class="mat-primary" (click)="payForOwner()">Pay 1$ for owner</button>-->
+</FlexboxLayout>
+
