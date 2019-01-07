@@ -15,6 +15,7 @@ import {UpdateAuthUser} from '../../../../store/auth/actions';
 import {Curriculum} from '../../../../models/curriculum';
 import {Schedule} from '../../../../models/schedule';
 import {Class} from '../../../../models/class';
+import { fromResource }  from "tns-core-modules/image-source";
 // import {MatDialog, Sort} from '@node_modules/@angular/material';
 // import {ProgramViewComponent} from '@components/program-view/program-view.component';
 // import {AttendanceOverviewComponent} from '@components/attendance-overview/attendance-overview.component';
@@ -24,13 +25,18 @@ import {Lesson} from '../../../../models/lesson';
 import {Observable} from 'rxjs';
 import * as ProgramReducer from '../../../../store/program/reducers';
 import {SetPrograms, UpdateProgram} from '../../../../store/program/actions';
+import {TNSFontIconService} from "nativescript-ng2-fonticon";
+import {Label} from "tns-core-modules/ui/label";
+import {Page} from "tns-core-modules/ui/page";
+import {action, ActionOptions} from "tns-core-modules/ui/dialogs";
+import {ScheduleFacade} from "~/app/facades/schedule/scheduleFacade";
 // import {ProgramPageComponent} from '@pages/layout/program/program-page/program-page.component';
 
 @Component({
   selector: 'DashboardStudent',
   templateUrl: './dashboard-student.component.html',
   moduleId: module.id,
-  styleUrls: ['./dashboard-student.component.scss']
+  styleUrls: ['./dashboard-student.component.css']
 })
 export class DashboardStudentComponent implements OnInit {
   @Input() user: User;
@@ -45,6 +51,9 @@ export class DashboardStudentComponent implements OnInit {
   onRightSubject: Subject<string> = new BehaviorSubject(null);
   insertingSchedule: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   currentMonth = moment();
+  startOfWeek = moment().startOf('isoWeek');
+  endOfWeek = moment().endOf('isoWeek');
+  week = [];
   selectedAttendance: BehaviorSubject<{program_id: number, curriculum_id: number, source: string}> = new BehaviorSubject<{program_id: number, curriculum_id: number, source: string}>({program_id: null, curriculum_id: null, source: null});
   usersAttendances: any = {};
   curriculumsForAttendance: {name: string, id: number}[] = [];
@@ -57,22 +66,25 @@ export class DashboardStudentComponent implements OnInit {
   programWithAllSchedules: Program;
   attendensesByCurriculum = 0;
   currentMode = 'timetable';
+  currentDay = moment();
+  selectedDay = moment();
   programSubject = new BehaviorSubject<Program>(null);
   refactoredSChedules: Schedule[];
   lessonsByCurriculum = {};
+  classesByDates = {};
   months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
   ];
   dialogAttendanceOverviewModal;
   dialogAttendanceMonthModal;
@@ -85,6 +97,9 @@ export class DashboardStudentComponent implements OnInit {
     private authStore: Store<AuthReducer.AuthState>,
     private curriculumService: CurriculumService,
     private attendanceService: AttendanceService,
+    private page: Page
+    // private fonticon: TNSFontIconService
+
     // private router: Router,
   ) { }
 
@@ -124,12 +139,10 @@ export class DashboardStudentComponent implements OnInit {
       }
     }));
     this.programsIdWithSubscriptionLength =  Object.keys(this.programsIdWithSubscription).length;
-    console.log(this.programs);
     if (!this.programs || this.programs.length === 0) {
         this.programService.getUsersPrograms()
           .subscribe(
             (resp: { data }) => {
-              console.log(resp);
               // resp.data.map( pr => {
               //   schedule.push(ProgramClassesComponent.reorganizeSchedule(pr as Program));
               // });
@@ -150,7 +163,7 @@ export class DashboardStudentComponent implements OnInit {
             }
           );
     } else {
-      this.setCalendarData();
+        this.setCalendarData();
     }
     this.selectedAttendance.subscribe(
       resp => {
@@ -179,6 +192,7 @@ export class DashboardStudentComponent implements OnInit {
       }
     );
     this.setAttendance();
+    this.getWeek();
   }
   setCalendarData() {
     const allClasses: Class[] = [];
@@ -239,7 +253,8 @@ export class DashboardStudentComponent implements OnInit {
     // this.refactoredSChedules = ProgramViewComponent.refactorSchedule(this.programWithAllSchedules.schedule);
     console.log(this.programs);
     console.log(this.programWithAllSchedules);
-    this.programSubject.next(this.programWithAllSchedules);
+    this.getClassByDate();
+    // this.programSubject.next(this.programWithAllSchedules);
   }
   // updateSchedule() {
   //   let schedule = {};
@@ -663,5 +678,77 @@ export class DashboardStudentComponent implements OnInit {
       });
     }
     return curriclums;
+  }
+  fromResourceConvert(){
+  return fromResource(this.user.avatar);
+  }
+  nextWeek() {
+    this.startOfWeek.add(7, 'days' );
+    this.endOfWeek.add(7, 'days');
+    this.getWeek();
+  }
+
+  prevWeek() {
+      this.startOfWeek.add(-7, 'days' );
+      this.endOfWeek.add(-7, 'days');
+    this.getWeek();
+  }
+  getWeek() {
+    this.week = [];
+    let day = this.startOfWeek;
+    while (day <= this.endOfWeek) {
+      this.week.push(day.toDate());
+      day = day.clone().add(1, 'd');
+    }
+  }
+  getDayNumber(day) {
+    return moment(day).date();
+  }
+
+  getDayName(day) {
+    return moment(day).format('dddd').charAt(0);
+  }
+  setSelectedDay(day) {
+    const label = <Label>this.page.getViewById("selected-day");
+    label.text = moment(day).format('ll');
+    this.selectedDay = day;
+    this.getClassByDate();
+  }
+  getSelectedDay() {
+   return moment(this.selectedDay).format('ll');
+  }
+  checkDay(day: any, forDay: string) {
+    switch (forDay) {
+        case 'current': {
+          return  moment(day).isSame(this.currentDay, 'day');
+        }
+        case 'selected': {
+          return  moment(day).isSame(this.selectedDay, 'day');
+        }
+    }
+  }
+  showCurrentLessons() {
+      const actionOptions: ActionOptions = {
+          title: "Your Title",
+          message: "Your message",
+          cancelButtonText: "Cancel",
+          actions: ["Option1", "Option2"],
+          cancelable: true // Android only
+      };
+
+      action(actionOptions).then((result) => {
+          console.log("Dialog result: ", result);
+          if (result === "Options1") {
+              // Do action 1
+          } else if (result === "Option2") {
+              // Do action 2
+          }
+      });
+  }
+  getClassByDate() {
+      // const time = moment(this.timeRange.min, 'HH:mm A').add(i, 'hours');
+      // const programs = this.source === 'overview' ? [this.program] : this.programs;
+      this.classesByDates = ScheduleFacade.getClassByDate(this.programWithAllSchedules, [this.programWithAllSchedules], this.selectedDay, this.classesByDates, false);
+      console.log(this.classesByDates, 'this.classesByDates***************this.classesByDates')
   }
 }

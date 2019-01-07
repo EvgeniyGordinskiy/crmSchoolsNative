@@ -48,9 +48,10 @@ export class AuthFacade {
   };
 
   checkAuthStatusAndRedirect(object) {
+      console.log(AuthFacade.getAuthStatus());
     setTimeout(() => {
-      if (AuthFacade.getAuthStatus() && this.notAuthnticatePages.includes(this.router.url.split('?')[0])) {
-          object.navigateTo('/dashboard');
+      if (AuthFacade.getAuthStatus()) {
+          object.navigateTo('/layout/dashboard');
       } else if (!AuthFacade.getAuthStatus() && !this.notAuthnticatePages.includes(this.router.url.split('?')[0])) {
           object.navigateTo('/login');
       }

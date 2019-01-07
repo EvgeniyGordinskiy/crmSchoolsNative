@@ -8,7 +8,7 @@ import {PaymentService} from '../../../../services/payment/payment.service';
   selector: 'DashboardPage',
   templateUrl: './dashboard-page.component.html',
   moduleId: module.id,
-  styleUrls: ['./dashboard-page.component.scss']
+  styleUrls: ['./dashboard-page.component.css']
 })
 export class DashboardPageComponent implements OnInit {
   user: User;

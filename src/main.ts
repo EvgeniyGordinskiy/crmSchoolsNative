@@ -10,4 +10,4 @@ import { AppModule } from "./app/app.module";
 *************************************************************/
 import "./app/shared/kinvey.common";
 
-platformNativeScriptDynamic({ startPageActionBarHidden: true }).bootstrapModule(AppModule);
+platformNativeScriptDynamic({ startPageActionBarHidden: true, createFrameOnBootstrap: true }).bootstrapModule(AppModule);

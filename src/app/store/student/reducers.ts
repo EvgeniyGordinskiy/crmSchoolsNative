@@ -71,7 +71,7 @@ export function reducer(state: any = initialState, action: ActionInterface) {
        state.lastAction = 'CLOSE_MODAL';
        return state;
     default:
-      console.log(state, 'default');
+      // console.log(state, 'default');
       state.lastAction = 'default';
       return state;
   }

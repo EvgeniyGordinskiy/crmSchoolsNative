@@ -1,0 +1,74 @@
+.dashboard-student-wrapper{
+    height: 100%;
+    width: 100%;
+}
+.dashboard-student-top-raw{
+    height: 35%;
+    width: 100%;
+    background: linear-gradient(235deg, #3aa17e, #00537e);
+}
+.dashboard-student-top-raw StackLayout Image{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+.dashboard-student-top-raw > GridLayout > StackLayout{
+    width: 350px;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+.dashboard-student-top-raw-current-day{
+    font-size: 15px;
+    color:white;
+    margin-top: 20px;
+}
+.dashboard-student-top-raw-calendar{
+    width: 100%;
+    margin-top: 30px;
+}
+.dashboard-student-top-raw-calendar-arrow{
+    font-size: 30px;
+    margin-top: 20px;
+    color: white;
+}
+.dashboard-student-top-raw-calendar-day{
+    color: white;
+    text-align: center;
+}
+.dashboard-student-top-raw-calendar-day-number{
+    font-size: 14px;
+    margin-top: 10px;
+}
+.selected-day{
+    color: #839fa1;
+}
+.current-day{
+    color: #32daad;
+    font-weight: bold;
+}
+.dashboard-student-count-button, .dashboard-student-check-in-button{
+    width: 54px;
+    height: 54px;
+    text-align: center;
+    vertical-align: middle;
+    color: #27a17f;
+    font-size: 16px;
+    border-radius: 50%;
+    border-color: #27a17f;
+    border-width: 2px;
+    padding: 2;
+    align-self: center;
+    z-index: 9;
+    margin-left: -40px;
+    background-color: white;
+}
+.dashboard-student-check-in-button{
+    margin-right: -40px;
+    margin-left: 0;
+    font-size: 12px;
+    padding-top: 2;
+    line-height: 0.7;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+}

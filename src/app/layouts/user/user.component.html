@@ -1,5 +1,5 @@
-<DockLayout>
-
+<GridLayout  rows="*, auto">
+    <router-outlet></router-outlet>
     <BottomNavigation
           dock="bottom"
           [tabs]="tabs"
@@ -11,4 +11,4 @@
           (tabPressed)="onBottomNavigationTabPressed($event)"
           row="1">
     </BottomNavigation>
-</DockLayout>
+</GridLayout>

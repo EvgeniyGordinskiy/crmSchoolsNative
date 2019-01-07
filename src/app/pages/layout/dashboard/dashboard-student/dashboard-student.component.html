@@ -1,5 +1,48 @@
-<FlexboxLayout>
-    <StackLayout>
-        <Label text="Student Page"></Label>
+<StackLayout class="dashboard-student-wrapper">
+    <StackLayout class="dashboard-student-top-raw">
+        <GridLayout rows="auto" columns="*">
+            <StackLayout orientation="horizontal" horizontalAlignment="right">
+                <Label
+                        verticalAlignment="bottom"
+                        class="dashboard-student-check-in-button"
+                        (tap)="showCurrentLessons()"
+                        text="Check in" textWrap="true">
+                </Label>
+                <Image alignSelf="center" src="{{user.avatar ? fromResourceConvert(user.avatar) : 'res://noavatar'}}" stretch="fill"></Image>
+                <Label verticalAlignment="bottom" class="dashboard-student-count-button" text="20" textWrap="true"></Label>
+            </StackLayout>
+        </GridLayout>
+        <FlexboxLayout justifyContent="center"  class="dashboard-student-top-raw-calendar">
+            <Label
+                    [text]="'mdi-chevron-left' | fonticon"
+                    (tap)="prevWeek()"
+                    class="mdi dashboard-student-top-raw-calendar-arrow">
+
+            </Label>
+            <StackLayout
+                    width="12%"
+                    *ngFor="let day of week"
+                    class="dashboard-student-top-raw-calendar-day"
+                    [ngClass]="{'selected-day': checkDay(day, 'selected')}"
+                    (tap)="setSelectedDay(day)"
+            >
+                <Label text="{{getDayName(day)}}"></Label>
+                <Label
+                        text="{{getDayNumber(day)}}"
+                        [ngClass]="{'current-day': checkDay(day, 'current')}"
+                        class="dashboard-student-top-raw-calendar-day-number"></Label>
+            </StackLayout>
+            <Label
+                    [text]="'mdi-chevron-right' | fonticon"
+                    (tap)="nextWeek()"
+                    class="mdi dashboard-student-top-raw-calendar-arrow"></Label>
+        </FlexboxLayout>
+        <FlexboxLayout justifyContent="center">
+            <Label
+                    class="dashboard-student-top-raw-current-day"
+                    id="selected-day"
+                    [text]="getSelectedDay()"></Label>
+        </FlexboxLayout>
     </StackLayout>
-</FlexboxLayout>
+    <Label text="Student Page"></Label>
+</StackLayout>

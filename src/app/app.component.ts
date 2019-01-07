@@ -26,8 +26,13 @@ export class AppComponent {
         private authFacade: AuthFacade,
         private _routerExtensions: RouterExtensions,
         private zone: NgZone,
-        private fonticon: TNSFontIconService
+        private page: Page,
+    private fonticon: TNSFontIconService
     ) {
+        this.page.actionBarHidden = true;
+        this.page.backgroundSpanUnderStatusBar = true;
+        this.page.className = "page-app-container";
+        this.page.statusBarStyle = "dark";
         this.authStore.subscribe(
             (val) => {
                 const auth = val.auth;
@@ -37,11 +42,11 @@ export class AppComponent {
             }
         );
         this.authStore.dispatch(new RefreshAuthState());
-        console.log('beforeRoute', this.authFacade.pageNeedAuth());
+        this.authFacade.checkAuthStatusAndRedirect(this);
     }
 
     beforeRoute() {
-        console.log('beforeRoute', this.authFacade.pageNeedAuth());
+        console.log('beforeRoute', this.authFacade.pageNeedAuth(), this.user);
         if (this.authFacade.pageNeedAuth()) {
             this.authFacade.checkAuthStatusAndRedirect(this);
             // if (!this.user.notAdmin && this.user.role !== 'super_admin') {
@@ -54,14 +59,14 @@ export class AppComponent {
             // }
             if (!PermissionFacade.checkPermissionsToAccessPage(this.router.url.split('?')[0], this.user)) {
                 if (AuthFacade.getAuthStatus()) {
-                    // this.router.navigate(['/home']);
+                    this.router.navigate(['/layout/dashboard']);
                 } else {
                     this.router.navigate(['/login']);
                 }
             }
         }
 
-        if (this.router.url === '/login' || this.router.url === '/auth/register') {
+        if (this.router.url === '/login' || this.router.url === '/register') {
             this.authStore.dispatch(new SignOut(this.authFacade, false));
         }
 
