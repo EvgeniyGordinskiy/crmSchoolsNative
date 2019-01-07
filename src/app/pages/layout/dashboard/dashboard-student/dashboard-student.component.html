@@ -8,7 +8,7 @@
                         (tap)="showCurrentLessons()"
                         text="Check in" textWrap="true">
                 </Label>
-                <Image alignSelf="center" src="{{user.avatar ? fromResourceConvert(user.avatar) : 'res://noavatar'}}" stretch="fill"></Image>
+                <Image alignSelf="center" src="{{user.avatar ? user.avatar : 'res://noavatar'}}" stretch="fill"></Image>
                 <Label verticalAlignment="bottom" class="dashboard-student-count-button" text="20" textWrap="true"></Label>
             </StackLayout>
         </GridLayout>
@@ -44,5 +44,22 @@
                     [text]="getSelectedDay()"></Label>
         </FlexboxLayout>
     </StackLayout>
-    <Label text="Student Page"></Label>
+    <StackLayout class="dashboard-student-upcoming-classes">
+        <FlexboxLayout justifyContent="space-around" *ngFor="let sch of getSelectedSchedules()">
+            <Label
+                    class="dashboard-student-upcoming-classes-class-name"
+                    [text]="sch.lesson ? sch.lesson.name : sch.name"></Label>
+            <Label text="-"></Label>
+            <StackLayout>
+                <Label
+                        class="dashboard-student-upcoming-classes-start-time"
+                        [text]="sch.selectedSchedule.start"></Label>
+                <Label [text]="sch.selectedSchedule.program_name"></Label>
+            </StackLayout>
+            <Label text="|"></Label>
+            <Label
+                    class="dashboard-student-upcoming-classes-button"
+                    text="Class Detail"></Label>
+        </FlexboxLayout>
+    </StackLayout>
 </StackLayout>

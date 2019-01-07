@@ -6,6 +6,7 @@ import {Curriculum} from "~/app/models/curriculum";
 export class ScheduleFacade {
   static schedulesWithLesson = {};
   static lessonNumber = {};
+  static format = 'MMM Do YY';
   static getTrafficLight(timeStringStart: string, timeStringEnd: string, format: string) : string {
       const momentGivenStart = moment(timeStringStart, format);
       const momentGivenEnd = moment(timeStringEnd, format);
@@ -100,7 +101,7 @@ export class ScheduleFacade {
                                 if (dayFromCalendarTimeStart.isBetween(dayFromCalendar, dayFromCalendarTimeEnd) && dayFromCalendarTimeStart.diff(dayFromCalendar, 'hour') < 1 ||
                                     dayFromCalendar.isSame(dayFromCalendarTimeStart) || withTime === false
                                 ) {
-                                    let date = dayFromCalendar.format('MMM Do YY');
+                                    let date = dayFromCalendar.format(ScheduleFacade.format);
                                     if (!classesByDates[date]) {
                                         classesByDates[date] = {};
                                     }

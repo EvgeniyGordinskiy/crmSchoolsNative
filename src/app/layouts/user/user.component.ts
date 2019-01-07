@@ -12,9 +12,9 @@ import {Page} from "tns-core-modules/ui/page";
 export class UserComponent implements OnInit {
 
     public tabs: BottomNavigationTab[] = [
-        new BottomNavigationTab('First', 'ic_home'),
-        new BottomNavigationTab('Second', 'ic_view_list'),
-        new BottomNavigationTab('Third', 'ic_menu')
+        new BottomNavigationTab('Dashboard', 'ic_home'),
+        new BottomNavigationTab('Schedule', 'ic_view_list'),
+        new BottomNavigationTab('Membership', 'ic_menu')
     ];
 
   constructor(

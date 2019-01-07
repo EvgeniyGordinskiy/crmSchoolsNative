@@ -15,7 +15,8 @@ import {UpdateAuthUser} from '../../../../store/auth/actions';
 import {Curriculum} from '../../../../models/curriculum';
 import {Schedule} from '../../../../models/schedule';
 import {Class} from '../../../../models/class';
-import { fromResource }  from "tns-core-modules/image-source";
+import {LoadingIndicator} from "nativescript-loading-indicator";
+// import {fromBase64, fromResource} from "tns-core-modules/image-source";
 // import {MatDialog, Sort} from '@node_modules/@angular/material';
 // import {ProgramViewComponent} from '@components/program-view/program-view.component';
 // import {AttendanceOverviewComponent} from '@components/attendance-overview/attendance-overview.component';
@@ -72,6 +73,8 @@ export class DashboardStudentComponent implements OnInit {
   refactoredSChedules: Schedule[];
   lessonsByCurriculum = {};
   classesByDates = {};
+  programsBydates = {};
+  loader = new LoadingIndicator();
   months = [
   'January',
   'February',
@@ -88,6 +91,20 @@ export class DashboardStudentComponent implements OnInit {
   ];
   dialogAttendanceOverviewModal;
   dialogAttendanceMonthModal;
+    options = {
+        message: 'Loading...',
+        progress: 0.65,
+        android: {
+            indeterminate: true,
+            cancelable: true,
+            cancelListener: function(dialog) { console.log("Loading cancelled") },
+            max: 100,
+            progressNumberFormat: "%1d/%2d",
+            progressPercentFormat: 0.53,
+            progressStyle: 1,
+            secondaryProgress: 1
+        }
+    };
 
   constructor(
     // public dialog: MatDialog,
@@ -104,6 +121,7 @@ export class DashboardStudentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.loader.show(this.options);
     this.authStore.subscribe(
       (val) => {
         console.log(val);
@@ -680,7 +698,7 @@ export class DashboardStudentComponent implements OnInit {
     return curriclums;
   }
   fromResourceConvert(){
-  return fromResource(this.user.avatar);
+  // return fromBase64(this.user.avatar);
   }
   nextWeek() {
     this.startOfWeek.add(7, 'days' );
@@ -728,27 +746,123 @@ export class DashboardStudentComponent implements OnInit {
     }
   }
   showCurrentLessons() {
+    const date = moment(this.currentDay).format(ScheduleFacade.format);
+    const options = {};
+    console.log(date, this.programsBydates[date], this.programsBydates);
+      if(this.programsBydates[date] &&
+          this.programsBydates[date].length > 0) {
+          this.programsBydates[date].map(sch => {
+            console.log(sch);
+            if (this.isGoing(sch)) {
+              let strName = sch.lesson.name + ', ' + sch.selectedSchedule.start + ' - ' + sch.selectedSchedule.end + '. Program - ' + sch.program_name;
+              options[strName] = sch;
+            }
+          });
+      }
+      console.log(options);
       const actionOptions: ActionOptions = {
-          title: "Your Title",
-          message: "Your message",
+          title: "Select Lesson",
           cancelButtonText: "Cancel",
-          actions: ["Option1", "Option2"],
+          actions: Object.keys(options),
           cancelable: true // Android only
       };
 
       action(actionOptions).then((result) => {
           console.log("Dialog result: ", result);
-          if (result === "Options1") {
-              // Do action 1
-          } else if (result === "Option2") {
-              // Do action 2
+          console.log(options);
+          if (options[result]) {
+            this.checkin(options[result]);
           }
       });
   }
   getClassByDate() {
       // const time = moment(this.timeRange.min, 'HH:mm A').add(i, 'hours');
       // const programs = this.source === 'overview' ? [this.program] : this.programs;
+      this.classesByDates = {};
       this.classesByDates = ScheduleFacade.getClassByDate(this.programWithAllSchedules, [this.programWithAllSchedules], this.selectedDay, this.classesByDates, false);
-      console.log(this.classesByDates, 'this.classesByDates***************this.classesByDates')
+      console.log(this.classesByDates, 'this.classesByDates***************this.classesByDates');
+      this.programsBydates = {};
+      Object.keys(this.classesByDates).map(date => {
+          Object.keys(this.classesByDates[date]).map(dayNumber => {
+              Object.keys(this.classesByDates[date][dayNumber]).map(schId => {
+                  this.classesByDates[date][dayNumber][schId].map(schedule => {
+                      if (!this.programsBydates[date]) {
+                          this.programsBydates[date] = [];
+                      }
+                      this.programsBydates[date].push(schedule);
+                  });
+              });
+          });
+      });
+      console.log(this.programsBydates, 'this.programsBydates***************this.programsBydates')
+      this.loader.hide();
   }
+
+  isGoing(sch) {
+        const schedule = sch.selectedSchedule;
+        const currentDay = moment(this.currentDay);
+        const scheduleTimeStart = moment(schedule.start, 'HH:mm A').month(currentDay.month() + 1).date(currentDay.date()).add('-1', 'hours');
+        const scheduleTimeEnd = moment(schedule.end, 'HH:mm A').month(currentDay.month() + 1).date(currentDay.date());
+        const condition1 = moment().isBetween(scheduleTimeStart, scheduleTimeEnd) || moment().isSame(scheduleTimeStart);
+        // let condition2 = true;
+        // console.log(scheduleTimeStart, scheduleTimeEnd, this.user);
+        // if (this.user && this.user.current_lesson && this.user.current_lesson.end) {
+            // let userSubscriptionId = null;
+            // this.user.subscriptions.map(item => {
+            //   if (item.program_id === schedule.program_id) {
+            //     userSubscriptionId = item.userSubscriptionId;
+            //   }
+            // });
+            // if (this.user.current_lesson.schedule_id) {
+            //     const currentLessonEndMoment = moment(this.user.current_lesson.end, 'HH:mm A').add(10, 'minutes');
+            //     const currentLessonMoment = moment(this.user.current_lesson.created_at, 'YYYY-MM-DD HH:mm:ss').hours(currentLessonEndMoment.hours()).minutes(currentLessonEndMoment.minutes());
+            //     condition2 = moment().isSameOrAfter(currentLessonMoment);
+            // } else {
+                // this.authStore.dispatch(new UpdateAuthUser({current_lesson: null}));
+            // }
+        // }
+
+        return condition1;
+  }
+    checkin(scheduleClass) {
+        const schedule = scheduleClass.selectedSchedule;
+        const body = {
+            user_id: this.user.id,
+            program_id: schedule.program_id,
+            schedule_id: schedule.id,
+            class_id: scheduleClass.id,
+            lesson_id: schedule.lesson ? schedule.lesson.id : null,
+            // subscription_id: schedule.subscription_id,
+        };
+        this.attendanceService.chechIn(body).subscribe(
+            (resp: { data: any, status: number }) => {
+                if (resp.status === 200) {
+                    if (resp.data) {
+                        this.user.current_lesson = resp.data[resp.data.length - 1];
+                        // this.user.yearAttendanceFromApi = resp.data;
+                        this.authStore.dispatch(new UpdateAuthUser({current_lesson: this.user.current_lesson, yearAttendanceFromApi: resp.data}));
+                    }
+                } else if (resp.status === 11200) {
+                   console.log(resp);
+                    // if (resp.data.error) {
+                    //     ConfirmModalComponent.textModal = resp.data.error;
+                    // }
+                    // ConfirmModalComponent.insertedObject = this;
+                    // ConfirmModalComponent.source = 'need_charge';
+                    // ConfirmModalComponent.methodDelete = 'goToMembershipPage';
+                    // this.confirmDialog = this.dialog.open(ConfirmModalComponent);
+                    // ConfirmModalComponent.modalRef = this.confirmDialog;
+                }
+                // console.log(resp);
+            }
+        );
+    }
+    getSelectedSchedules() {
+        let upcomingClasses = [];
+        const date = moment(this.selectedDay).format(ScheduleFacade.format);
+     if (this.programsBydates[date] && this.programsBydates[date].length > 0) {
+         upcomingClasses = this.programsBydates[date];
+     }
+     return upcomingClasses;
+    }
 }

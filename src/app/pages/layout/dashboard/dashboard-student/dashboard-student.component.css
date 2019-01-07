@@ -1,10 +1,12 @@
 .dashboard-student-wrapper{
     height: 100%;
     width: 100%;
+    background-color: #f7f7f7;
 }
 .dashboard-student-top-raw{
     height: 35%;
     width: 100%;
+    margin-bottom: 20px;
     background: linear-gradient(235deg, #3aa17e, #00537e);
 }
 .dashboard-student-top-raw StackLayout Image{
@@ -71,4 +73,18 @@
     right: 20px;
     width: 80px;
     height: 80px;
+}
+.dashboard-student-upcoming-classes{
+    color: grey;
+    font-size: 12px;
+    height: 30%;
+}
+.dashboard-student-upcoming-classes > FlexboxLayout{
+    margin-bottom: 30px;
+    border-bottom-width: 1px;
+    border-color: rgba(157, 157, 157, 0.11);
+}
+.dashboard-student-upcoming-classes-class-name, .dashboard-student-upcoming-classes-start-time{
+    font-size: 16px;
+    color: black;
 }
